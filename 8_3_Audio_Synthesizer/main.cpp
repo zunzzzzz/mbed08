@@ -3,7 +3,7 @@
 #include "DA7212.h"
 
 #define bufferLength (32)
-#define signalLength (100)
+#define signalLength (1024)
 
 DA7212 audio;
 Serial pc(USBTX, USBRX);
@@ -50,7 +50,7 @@ void playNote(int freq)
 {
   for (int i = 0; i < kAudioTxBufferSize; i++)
   {
-    waveform[i] = (int16_t) (signal[(uint16_t) (i * freq / (kAudioSampleFrequency / kAudioTxBufferSize)) % signalLength]);
+    waveform[i] = (int16_t) (signal[(uint16_t) (i * freq * signalLength * 1. / kAudioSampleFrequency) % signalLength]);
   }
   // the loop below will play the note for the duration of 1s
   for(int j = 0; j < kAudioSampleFrequency / kAudioTxBufferSize; ++j)
@@ -67,8 +67,9 @@ void stopPlayNoteC(void) {queue.cancel(idC);}
 
 int main(void)
 {
+  green_led = 1;
   t.start(callback(&queue, &EventQueue::dispatch_forever));
-  button.rise(queue.event(loadWaveformHandler));
+  button.rise(queue.event(loadSignalHandler));
   keyboard0.rise(queue.event(playNoteC));
   keyboard0.fall(queue.event(stopPlayNoteC));
 }
