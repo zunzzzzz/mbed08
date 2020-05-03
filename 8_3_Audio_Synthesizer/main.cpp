@@ -3,7 +3,7 @@
 #include "DA7212.h"
 
 #define bufferLength (32)
-#define signalLength (1024)
+#define signalLength (925)
 
 DA7212 audio;
 Serial pc(USBTX, USBRX);
